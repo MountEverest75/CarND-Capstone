@@ -91,6 +91,8 @@ class WaypointUpdater(object):
             wp1 = i
         return dist
 
+    def publish(self):
+        pass
 
 if __name__ == '__main__':
     try:
