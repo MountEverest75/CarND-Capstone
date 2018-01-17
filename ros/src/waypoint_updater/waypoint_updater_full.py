@@ -77,12 +77,10 @@ class WaypointUpdater(object):
         rospy.loginfo("Detected light: " + str(msg.data))
         if self.red_light_waypoint > -1:
             self.publish()
-        #rospy.loginfo("Detected Traffic Light")
 
     def obstacle_cb(self, msg):
         # TODO: Callback for /obstacle_waypoint message. We will implement it later
-        rospy.loginfo("Detected obstacle")
-        # pass
+        pass
 
     def get_waypoint_velocity(self, waypoint):
         return waypoint.twist.twist.linear.x
