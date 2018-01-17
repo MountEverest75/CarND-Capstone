@@ -67,7 +67,7 @@ class WaypointUpdater(object):
         # TODO: Implement
         # Topic /base_waypoint published only once
         if self.waypoints is None:
-            self.waypoints = lane.waypoints
+            self.waypoints = waypoints.waypoints
 
     def traffic_cb(self, msg):
         # TODO: Callback for /traffic_waypoint message. Implement
