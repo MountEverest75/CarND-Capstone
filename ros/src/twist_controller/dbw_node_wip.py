@@ -6,7 +6,7 @@ from dbw_mkz_msgs.msg import ThrottleCmd, SteeringCmd, BrakeCmd, SteeringReport
 from geometry_msgs.msg import TwistStamped
 import math
 
-from twist_controller import TwistController
+from twist_controller import Controller
 
 '''
 You can build this node only after you have built (or partially built) the `waypoint_updater` node.
@@ -72,7 +72,7 @@ class DBWNode(object):
                                          BrakeCmd, queue_size=1)
 
         # TODO: Create `TwistController` object
-        self.controller = TwistController(cp=cp)
+        self.controller = Controller(cp=cp)
 
         # Define flags
         self.dbw_enabled = True
