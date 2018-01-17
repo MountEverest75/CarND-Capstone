@@ -5,6 +5,10 @@ from geometry_msgs.msg import PoseStamped
 from styx_msgs.msg import Lane, Waypoint
 
 import math
+# RKC: New Imports *Begin*
+import tf
+from std_msgs.msg import Int32
+# RKC: New Imports *End*
 
 '''
 This node will publish waypoints from the car's current position to some `x` distance ahead.
@@ -23,6 +27,13 @@ TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 
 LOOKAHEAD_WPS = 200 # Number of waypoints we will publish. You can change this number
 
+# RKC: *Begin*
+DEBUG_MODE = False
+MAX_DECEL = 0.5
+STOP_DIST = 5.0
+TARGET_SPEED_MPH = 10
+# RKC: *End*
+
 
 class WaypointUpdater(object):
     def __init__(self):
@@ -32,29 +43,39 @@ class WaypointUpdater(object):
         rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
 
         # TODO: Add a subscriber for /traffic_waypoint and /obstacle_waypoint below
-
+        # RKC: *Begin*
+        # Added subscribers for traffic and obstacles. The subscriber functions are defined as traffic_cb and obstacle_cb
+        rospy.Subscriber('/traffic_waypoint', Int32, self.traffic_cb, queue_size=1)
+        rospy.Subscriber('/obstacle_waypoint', Lane, self.obstacle_cb, queue_size=1)
+        # RKC: *End*
 
         self.final_waypoints_pub = rospy.Publisher('final_waypoints', Lane, queue_size=1)
 
         # TODO: Add other member variables you need below
+        self.cur_pose = None
+        self.waypoints = None
 
         rospy.spin()
 
     def pose_cb(self, msg):
         # TODO: Implement
-        pass
+        self.cur_pose = msg.pose
+        if self.waypoints is not None:
+            self.publish()
 
     def waypoints_cb(self, waypoints):
         # TODO: Implement
-        pass
+        # Topic /base_waypoint published only once
+        if self.waypoints is None:
+            self.waypoints = lane.waypoints
 
     def traffic_cb(self, msg):
         # TODO: Callback for /traffic_waypoint message. Implement
-        pass
+        rospy.loginfo("Detected Traffic Light")
 
     def obstacle_cb(self, msg):
         # TODO: Callback for /obstacle_waypoint message. We will implement it later
-        pass
+        rospy.loginfo("Detected obstacle")
 
     def get_waypoint_velocity(self, waypoint):
         return waypoint.twist.twist.linear.x
