@@ -31,6 +31,21 @@ that we have created in the `__init__` function.
 
 '''
 
+class CarParams(object):
+    def __init__(self):
+        self.vehicle_mass = None
+        self.fuel_capacity = None
+        self.brake_deadband = None
+        self.decel_limit = None
+        self.accel_limit = None
+        self.wheel_radius = None
+        self.wheel_base = None
+        self.steer_ratio = None
+        self.max_lat_accel = None
+        self.max_steer_angle = None
+        self.min_speed = None
+
+
 class DBWNode(object):
     def __init__(self):
         rospy.init_node('dbw_node')
