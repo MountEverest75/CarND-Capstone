@@ -35,7 +35,7 @@ class DBWNode(object):
         brake_deadband = rospy.get_param('~brake_deadband', .1)
         decel_limit = rospy.get_param('~decel_limit', -5)
         accel_limit = rospy.get_param('~accel_limit', 1.)
-        wheel_radius = rospy.get_param('~wheel_radius', 0.2413)
+        #wheel_radius = rospy.get_param('~wheel_radius', 0.2413)
         wheel_base = rospy.get_param('~wheel_base', 2.8498)
         steer_ratio = rospy.get_param('~steer_ratio', 14.8)
         max_lat_accel = rospy.get_param('~max_lat_accel', 3.)
@@ -48,7 +48,7 @@ class DBWNode(object):
                       'decel_limit': decel_limit,
                       'accel_limit': accel_limit,
                       'wheel_radius': wheel_radius,
-                      'wheel_base': wheel_base,
+                      #'wheel_base': wheel_base,
                       'steer_ratio': steer_ratio,
                       'max_lat_accel': max_lat_accel,
                       'max_steer_angle': max_steer_angle}
