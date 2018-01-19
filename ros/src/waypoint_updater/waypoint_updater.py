@@ -38,9 +38,9 @@ TARGET_SPEED_MPH = 10
 PUBLISH_RATE = 20
 # *End*
 
-class CarState(Enum):
-    DRIVING = 0
-    STOPPED = 1
+# class CarState(Enum):
+#     DRIVING = 0
+#     STOPPED = 1
 
 class WaypointUpdater(object):
     def __init__(self):
@@ -63,7 +63,7 @@ class WaypointUpdater(object):
         self.cur_pose = None
         self.waypoints = None
         self.stop_waypoint = None
-        self.state = CarState.DRIVING
+        # self.state = CarState.DRIVING
         # Define acceptable acceleration and jerk parameters to ensure smooth motion
         #self.accel_limit = rospy.get_param('~accel_limit', 1.)
         # DONE
@@ -85,12 +85,13 @@ class WaypointUpdater(object):
 
     def traffic_cb(self, msg):
         # TODO: Callback for /traffic_waypoint message. Implement
-        if msg.data:
-            self.stop_waypoint = msg.data
-            self.state = CarState.STOPPED
-        else:
-            self.stop_waypoint = None
-            self.state = CarState.DRIVING
+        self.stop_waypoint = msg.data
+        # if msg.data:
+        #     self.stop_waypoint = msg.data
+        #     self.state = CarState.STOPPED
+        # else:
+        #     self.stop_waypoint = None
+        #     self.state = CarState.DRIVING
 
         #rospy.loginfo("Detected light: " + str(msg.data))
         if self.stop_waypoint > -1:
