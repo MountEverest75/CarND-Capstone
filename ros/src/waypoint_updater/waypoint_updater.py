@@ -5,10 +5,12 @@ from geometry_msgs.msg import PoseStamped
 from styx_msgs.msg import Lane, Waypoint
 
 import math
-# RKC: New Imports *Begin*
+
+'''Define new imports'''
+#  *Begin*
 import tf
 from std_msgs.msg import Int32
-# RKC: New Imports *End*
+#  *End*
 
 '''
 This node will publish waypoints from the car's current position to some `x` distance ahead.
@@ -27,13 +29,18 @@ TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 
 LOOKAHEAD_WPS = 200 # Number of waypoints we will publish. You can change this number
 
-# RKC: *Begin*
-DEBUG_MODE = False
+'''Define new constants'''
+# *Begin*
 MAX_DECEL = 0.5
-STOP_DIST = 5.0
+STOP_DISTANCE = 5.0
 TARGET_SPEED_MPH = 10
-# RKC: *End*
+# Waypoint publish rate - reading 20 points ahead of time
+PUBLISH_RATE = 20
+# *End*
 
+class CarState(Enum):
+    DRIVING = 0
+    STOPPED = 1
 
 class WaypointUpdater(object):
     def __init__(self):
@@ -43,19 +50,23 @@ class WaypointUpdater(object):
         rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
 
         # TODO: Add a subscriber for /traffic_waypoint and /obstacle_waypoint below
-        # RKC: *Begin*
-        # Added subscribers for traffic and obstacles. The subscriber functions are defined as traffic_cb and obstacle_cb
+        '''Added subscribers for traffic and obstacles. The subscriber functions are defined as traffic_cb and obstacle_cb'''
+        # *Begin*
         rospy.Subscriber('/traffic_waypoint', Int32, self.traffic_cb, queue_size=1)
         rospy.Subscriber('/obstacle_waypoint', Lane, self.obstacle_cb, queue_size=1)
-        # RKC: *End*
+        # *End*
+        # DONE
 
         self.final_waypoints_pub = rospy.Publisher('final_waypoints', Lane, queue_size=1)
 
         # TODO: Add other member variables you need below
         self.cur_pose = None
         self.waypoints = None
-        self.red_light_waypoint = None
-        self.waypoints = None
+        self.stop_waypoint = None
+        self.state = CarState.DRIVING
+        # Define acceptable acceleration and jerk parameters to ensure smooth motion
+        #self.accel_limit = rospy.get_param('~accel_limit', 1.)
+        # DONE
 
         rospy.spin()
 
@@ -66,16 +77,24 @@ class WaypointUpdater(object):
             self.publish()
 
     def waypoints_cb(self, lane):
-        # TODO: Implement
-        # do this once and not all the time
+        # TODO: Callback for /base_waypoints
+        # Publish to /base_waypoints only once
+        wp_count = len(lane.waypoints)
         if self.waypoints is None:
             self.waypoints = lane.waypoints
 
     def traffic_cb(self, msg):
         # TODO: Callback for /traffic_waypoint message. Implement
-        self.red_light_waypoint = msg.data
-        rospy.loginfo("Detected light: " + str(msg.data))
-        if self.red_light_waypoint > -1:
+        if msg.data:
+            self.stop_waypoint = msg.data
+            self.state = CarState.STOPPED
+        else:
+            self.stop_waypoint = None
+            self.state = CarState.DRIVING
+
+        #rospy.loginfo("Detected light: " + str(msg.data))
+        if self.stop_waypoint > -1:
+        #if self.state == CarState.STOPPED:
             self.publish()
 
     def obstacle_cb(self, msg):
@@ -101,7 +120,7 @@ class WaypointUpdater(object):
         return math.sqrt(x*x + y*y + z*z)
 
     def closest_waypoint(self, pose, waypoints):
-        # simply take the code from the path planning module and re-implement it here
+        # Converted path planning code written in c++ to python
         closest_len = 100000
         closest_waypoint = 0
         dl = lambda a, b: math.sqrt((a.x-b.x)**2 + (a.y-b.y)**2)
@@ -114,7 +133,7 @@ class WaypointUpdater(object):
         return closest_waypoint
 
     def next_waypoint(self, pose, waypoints):
-        # same concepts from path planning in here
+        # same concepts from path planning used here
         closest_waypoint = self.closest_waypoint(pose, waypoints)
         map_x = waypoints[closest_waypoint].pose.pose.position.x
         map_y = waypoints[closest_waypoint].pose.pose.position.y
@@ -147,7 +166,7 @@ class WaypointUpdater(object):
                 vel = 0
             else:
                 dist = self.distance(wp.pose.pose.position, last.pose.pose.position)
-                dist = max(0, dist - STOP_DIST)
+                dist = max(0, dist - STOP_DISTANCE)
                 vel  = math.sqrt(2 * MAX_DECEL * dist)
                 if vel < 1.:
                     vel = 0.
@@ -161,7 +180,7 @@ class WaypointUpdater(object):
             next_waypoint_index = self.next_waypoint(self.cur_pose, self.waypoints)
             lookahead_waypoints = self.waypoints[next_waypoint_index:next_waypoint_index+LOOKAHEAD_WPS]
 
-            if self.red_light_waypoint is None or self.red_light_waypoint < 0:
+            if self.stop_waypoint is None or self.stop_waypoint < 0:
 
                 # set the velocity for lookahead waypoints
                 for i in range(len(lookahead_waypoints) - 1):
@@ -169,13 +188,8 @@ class WaypointUpdater(object):
                     self.set_waypoint_velocity(lookahead_waypoints, i, (TARGET_SPEED_MPH * 1609.34) / (60 * 60))
 
             else:
-                redlight_lookahead_index = max(0, self.red_light_waypoint - next_waypoint_index)
+                redlight_lookahead_index = max(0, self.stop_waypoint - next_waypoint_index)
                 lookahead_waypoints = self.decelerate(lookahead_waypoints, redlight_lookahead_index)
-
-            if DEBUG_MODE:
-                posx = self.waypoints[next_waypoint_index].pose.pose.position.x
-                posy = self.waypoints[next_waypoint_index].pose.pose.position.y
-                rospy.loginfo("Closest waypoint: [index=%d posx=%f posy=%f]", next_waypoint_index, posx, posy)
 
             lane = Lane()
             lane.header.frame_id = '/world'
