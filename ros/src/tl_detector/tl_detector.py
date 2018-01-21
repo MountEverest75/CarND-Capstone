@@ -46,14 +46,15 @@ class TLDetector(object):
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
 
         self.bridge = CvBridge()
-        print(self.config)
+        #print(self.config)
         fx = self.config['camera_info']['focal_length_x']
         fy = self.config['camera_info']['focal_length_y']
         # image size        
         image_width = self.config['camera_info']['image_width']
         image_height = self.config['camera_info']['image_height']
         scenes = self.config['camera_info']['scenes']
-        self.light_classifier = TLClassifier(fx,fy,image_width,image_height,scenes)
+        #self.light_classifier = TLClassifier(fx,fy,image_width,image_height,scenes)
+        self.light_classifier = TLClassifier()
         self.listener = tf.TransformListener()
 
         self.state = TrafficLight.UNKNOWN
@@ -144,8 +145,8 @@ class TLDetector(object):
 
         cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
         print("got a img")
-        cv2.imshow("test",cv_image)
-        k = cv2.waitKey(1)
+        #cv2.imshow("test",cv_image)
+        #k = cv2.waitKey(1)
         #Get classification
         return self.light_classifier.get_classification(cv_image)
 
@@ -183,9 +184,10 @@ class TLDetector(object):
                     light_index = i
             
             light = self.lights[light_index]
+            print("light: ", light_index)
             
         #find the closest visible traffic light (if one exists)
-        state = self.get_light_state(light)
+        #state = self.get_light_state(light)
         if light:
             state = self.get_light_state(light)
             return light_index, state
