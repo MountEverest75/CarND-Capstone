@@ -9,11 +9,11 @@ class TLClassifier(object):
 
 
     def __init__(self,fx,fy,image_width,image_height,scenes):
-	self.fx = fx
-	self.fy = fy
-	self.image_width = image_width
-	self.image_height = image_height
-        
+        self.fx = fx
+        self.fy = fy
+        self.image_width = image_width
+        self.image_height = image_height
+
         model_data = ['sim.pb','site.pb']
         self.min_score_thresh = 0.7
 
@@ -96,7 +96,7 @@ class TLClassifier(object):
                 ex_cal_green = ex_cal_green.mean()
                 ex_cal_blue = ex_cal_blue.mean()
 
-			
+
                 cv2.imshow("light"+str(i),light)
                 cv2.waitKey(1)
                 if (ex_cal_red-ex_cal_green)>5:
@@ -111,5 +111,3 @@ class TLClassifier(object):
                 print(ex_cal_red,ex_cal_green,ex_cal_blue)
 
         return light_state
-
-
