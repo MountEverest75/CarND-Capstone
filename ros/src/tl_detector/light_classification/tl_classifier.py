@@ -1,4 +1,5 @@
 from styx_msgs.msg import TrafficLight
+<<<<<<< HEAD
 import tensorflow as tf
 import cv2
 import numpy as np
@@ -39,6 +40,16 @@ class TLClassifier(object):
             self.detection_scores = detection_graph.get_tensor_by_name('detection_scores:0')
             self.detection_classes = detection_graph.get_tensor_by_name('detection_classes:0')
             self.num_detections = detection_graph.get_tensor_by_name('num_detections:0')
+=======
+import cv2
+import numpy as np
+
+class TLClassifier(object):
+    def __init__(self):
+        #TODO load classifier
+        #self.model = load_model('light_classifier_model.h5')
+        pass
+>>>>>>> origin/cv_camera
 
     def get_classification(self, image):
         """Determines the color of the traffic light in the image
@@ -47,6 +58,7 @@ class TLClassifier(object):
         Returns:
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
         """
+<<<<<<< HEAD
         #TODO implement light color prediction
         #image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image_np_expanded = np.expand_dims(image, axis=0)
@@ -108,3 +120,41 @@ class TLClassifier(object):
                 print(ex_cal_red,ex_cal_green,ex_cal_blue)
 
         return light_state
+=======
+        #TODO (denise) implement yellow and green and compare areas
+        result = TrafficLight.UNKNOWN
+        output = image.copy()
+        red = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+
+        lower_red = np.array([0,50,50])
+        upper_red = np.array([10,255,255])
+        red1 = cv2.inRange(red, lower_red , upper_red)
+
+
+        lower_red = np.array([170,50,50])
+        upper_red = np.array([180,255,255])
+        red2 = cv2.inRange(red, lower_red , upper_red)
+
+        converted_img = cv2.addWeighted(red1, 1.0, red2, 1.0, 0.0)
+
+        blur_img = cv2.GaussianBlur(converted_img,(15,15),0)
+
+
+        #edges = cv2.Canny(imgray,thresh,thresh*3)
+
+        circles = cv2.HoughCircles(blur_img,cv2.HOUGH_GRADIENT,0.5,41, param1=70,param2=30,minRadius=5,maxRadius=150)
+
+        found = False 
+        if circles is not None:
+            result = TrafficLight.RED
+        #    for i in circles[0,:3]:
+        #        cv2.circle(output,(i[0],i[1]),maxRadius,(255, 100, 100),2)
+      
+        
+        #need to include more image, so ignore other colors
+        #green may be trees.  Just look for red lights
+        #if red_area > 40:
+        return result
+
+>>>>>>> origin/cv_camera

@@ -3,5 +3,6 @@ camera_info:
   focal_length_y: 1353.838257
   image_width: 800
   image_height: 600
+  scenes: 1
 stop_line_positions:
     - [8.0, 16.2]
