@@ -3,10 +3,13 @@
 
 ### Our Team - Carla Chargers
 
-* Ravi Kiran Chebolu - Team Lead and Waypoint Updater
-* Qi Peng      - Traffic Light Detection
-* Inhan Song   - Control Design
-* Yasuyaki Kataoka  - Environment Setup and Testing
+| Name | Contribution | Email |
+| --- | --- | --- |
+| Ravi Kiran Chebolu | Team Lead and Waypoint Updater development | ravikiran_prof@yahoo.com or ravikiranmailid@gmail.com |
+| Qi Peng | Traffic Light Detection development| pengqi193@gmail.com |
+| Inhan Song | Control Module development| cyrano5614@gmail.com |
+| Yasuyaki Kataoka | Environment Setup, Reviews and Testing | yk1002jp@gmail.com |
+
 
 ### Introduction
 The purpose of this project is to build ROS nodes implementing core functionalities of an autonomous vehicle system, test the code in simulator and run on Carla. The core ROS nodes that need to be built are listed below:  
