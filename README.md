@@ -43,10 +43,10 @@ The changes to classify traffic light are made in tl_classifier.py. The changes 
 The car simulator receives commands from the control module to steer, brake and accelerate the car. The logic can be found in dbw_node.py file.
 
 ### Testing and Results
-We have observed latency with waypoint updates while using simulator in Mac with ROS VM provided by Udacity. We have observed better performance of simulator while running on machines with Native ubuntu installations and GPU processors. The following video shows successful execution of test in simulator.
+We have observed latency with waypoint updates while using simulator in Mac with ROS VM provided by Udacity. We have observed better performance of simulator while running on machines with Native ubuntu installations and GPU processors. The following [video](https://youtu.be/F1mJKhlT76I) clip shows successful execution of test in simulator.
 
-![](https://youtu.be/F1mJKhlT76I)
-
+### Conclusion
+The architecture using publish/subscribe model between ROS nodes has been found to be robust and non blocking. One of the improvements that can be done would be to train the traffic light detection and use the model to classify. Another amendment would be to refactor the code for execution in a church lot which has been recently added in the simulator. Overall the results have been satisfactory. Thanks to the Awesome team work !
 
 ----
 ### Udacity Documentation
