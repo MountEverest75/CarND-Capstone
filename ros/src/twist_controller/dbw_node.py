@@ -94,10 +94,10 @@ class DBWNode(object):
                                                                     self.current_velocity,
                                                                     time_interval)
 
-            if self.dbw_enabled:
-                self.publish(throttle, brake, steering)
-            else:
-                self.controller.reset()
+                if self.dbw_enabled:
+                    self.publish(throttle, brake, steering)
+                else:
+                    self.controller.reset()
 
             self.previous_time = current_time
             rate.sleep()
